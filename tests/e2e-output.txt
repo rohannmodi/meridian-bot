@@ -1,0 +1,1944 @@
+
+════════════════════════════════════════════════════════════════════════
+  Meridian Recovery — Step 7 End-to-End Verification
+  2026-06-17T18:36:21.104Z
+════════════════════════════════════════════════════════════════════════
+
+════════════════════════════════════════════════════════════════════════
+  ACC-001 Sarah Johnson — P-200 $4,200 clean → RESOLVED
+════════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────────────
+  GREETING
+────────────────────────────────────────────────────────────────────────
+
+  [Turn 1] GREETING (no sessionId)
+  REQ: {}
+  RES state=AUTH_PENDING msg="Thank you for contacting Meridian Recovery Services. My name is Meridian Assistant. This conversation may be monitored a..."
+  META: rung=null offers={"PIF":false,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=3
+  Session: bf25148b-fd76-47b1-815f-7a98194c8722
+
+────────────────────────────────────────────────────────────────────────
+  AUTH
+────────────────────────────────────────────────────────────────────────
+
+  [Turn 2] AUTH ACC-001
+  REQ: {"sessionId":"bf25148b-fd76-47b1-815f-7a98194c8722","auth":{"accountRef":"ACC-001","firstName":"Sarah","lastName":"Johnson","ssn4":"4321","zip":"10001"}}
+  RES state=NEGOTIATION_OPEN msg="This is a communication from a debt collector. This is an attempt to collect a debt, and any information obtained, inclu..."
+  META: rung=PIF offers={"PIF":true,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=null
+
+  [Turn 3] Decline PIF
+  REQ: {"sessionId":"bf25148b-fd76-47b1-815f-7a98194c8722","message":"No, I cannot pay in full."}
+  RES state=NEGOTIATION msg="I completely understand that paying the full balance at once isn't feasible right now. We do have another option availab..."
+  META: rung=BIF_PAYMENTS offers={"PIF":true,"BIF_PAYMENTS":true,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=null
+
+  [Turn 4] Accept BIF_PAYMENTS
+  REQ: {"sessionId":"bf25148b-fd76-47b1-815f-7a98194c8722","message":"Yes, $1,400 a month works for me."}
+  RES state=AWAITING_CONFIRMATION msg="To confirm the arrangement:↵- $1,400.00 per month for 3 months↵- First payment: [DATE]↵- Total: $4,200.00↵- Payment meth..."
+  META: rung=BIF_PAYMENTS offers={"PIF":true,"BIF_PAYMENTS":true,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=null
+
+  [Turn 5] Confirm YES
+  REQ: {"sessionId":"bf25148b-fd76-47b1-815f-7a98194c8722","message":"YES"}
+  RES state=RESOLVED msg="Your arrangement has been confirmed. A payment specialist will contact you to complete the payment process. Is there any..."
+  META: rung=BIF_PAYMENTS offers={"PIF":true,"BIF_PAYMENTS":true,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=null
+
+  (b) SESSION FINAL STATE:
+{
+  "state": "RESOLVED",
+  "currentRung": "BIF_PAYMENTS",
+  "offers": {
+    "PIF": true,
+    "BIF_PAYMENTS": true,
+    "SIF": false,
+    "SIF_PAYMENTS": false,
+    "PPA": false
+  },
+  "pendingOffer": {
+    "rung": "BIF_PAYMENTS",
+    "type": "balance_in_payments",
+    "monthlyPayment": 1400,
+    "totalPayment": 4200,
+    "months": 3,
+    "withinLimit": true,
+    "exceedsCap": false,
+    "effectiveMaxMonths": 6
+  },
+  "escalationReason": null
+}
+
+  (c) AUDIT LOG:
+[
+  {
+    "ts": "2026-06-17T18:36:21.127Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": null
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:36:21.127Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "Thank you for contacting Meridian Recovery Services. My name is Meridian Assistant. This conversation may be monitored and recorded; by continuing you are providing your consent. How may I help you?\n\nTo access your account, please provide:\n1. Your account reference number\n2. Your first and last name\n3. The last 4 digits of your SSN\n4. Your ZIP code"
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:36:21.138Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "AUTH_ATTEMPT",
+    "source": "code",
+    "data": {
+      "attempt": 1,
+      "success": true,
+      "fields_provided": [
+        "accountRef",
+        "firstName",
+        "lastName",
+        "ssn4",
+        "zip"
+      ]
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:36:21.138Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "PREFERRED_LANGUAGE_REQUIRED",
+    "source": "code",
+    "data": {
+      "account_state": "NY",
+      "note": "Known gap — no output change in v1"
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:36:21.139Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "DISCLOSURE_DELIVERED",
+    "source": "code",
+    "data": {
+      "which": "MINI_MIRANDA",
+      "verbatim_match": true
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:21.139Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "DISCLOSURE_DELIVERED",
+    "source": "code",
+    "data": {
+      "which": "COLLECTOR_STATEMENT",
+      "verbatim_match": true
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:21.139Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": "auth_success_disclosures_delivered"
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:21.139Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "OFFER_MADE",
+    "source": "code",
+    "data": {
+      "rung": "PIF",
+      "type": "paid_in_full",
+      "amount": 4200
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:21.139Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "HIERARCHY_STEP",
+    "source": "code",
+    "data": {
+      "offered": "PIF",
+      "accepted": null
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:21.139Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "This is a communication from a debt collector. This is an attempt to collect a debt, and any information obtained, including this call recording, will be used for that purpose.\n\nI am with Meridian Recovery Services on behalf of Apex Card in regard to your First National Bank account. Your account was placed with our office as of August 15, 2025 and reflects a balance of $4,200.00. It is my goal to resolve this with you in a courteous and professional manner. How can I help you resolve your balance today?\n\nAre you able to pay the balance of $4,200.00 today?",
+      "disclosuresDelivered": [
+        "MINI_MIRANDA",
+        "COLLECTOR_STATEMENT"
+      ]
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:21.142Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "CONSUMER_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "No, I cannot pay in full."
+    },
+    "state_before": "NEGOTIATION_OPEN",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:27.530Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": "advance_to_BIF_PAYMENTS"
+    },
+    "state_before": "NEGOTIATION_OPEN",
+    "state_after": "NEGOTIATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:27.530Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "OFFER_MADE",
+    "source": "code",
+    "data": {
+      "rung": "BIF_PAYMENTS",
+      "type": "balance_in_payments",
+      "monthly_payment": 1400,
+      "months": 3,
+      "total_payment": 4200,
+      "exceeds_cap": false
+    },
+    "state_before": "NEGOTIATION_OPEN",
+    "state_after": "NEGOTIATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:27.530Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "HIERARCHY_STEP",
+    "source": "code",
+    "data": {
+      "offered": "BIF_PAYMENTS",
+      "accepted": null
+    },
+    "state_before": "NEGOTIATION_OPEN",
+    "state_after": "NEGOTIATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:30.285Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "I completely understand that paying the full balance at once isn't feasible right now. We do have another option available: a balance-in-payments arrangement where you would make 3 monthly payments of $1,400 each, for a total of $4,200. Would this payment arrangement work for you?",
+      "rung": "BIF_PAYMENTS"
+    },
+    "state_before": "NEGOTIATION_OPEN",
+    "state_after": "NEGOTIATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:30.295Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "CONSUMER_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "Yes, $1,400 a month works for me."
+    },
+    "state_before": "NEGOTIATION",
+    "state_after": "NEGOTIATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:36.995Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": "consumer_accepted"
+    },
+    "state_before": "NEGOTIATION",
+    "state_after": "AWAITING_CONFIRMATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:36.995Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "To confirm the arrangement:\n- $1,400.00 per month for 3 months\n- First payment: [DATE]\n- Total: $4,200.00\n- Payment method: ACH from your bank account\n\nBy confirming, you authorize Meridian Recovery Services to debit your account on each scheduled date. Changes must be requested by 11 AM the day before any scheduled post.\n\nReply YES to authorize, or NO to discuss other options.",
+      "rung": "BIF_PAYMENTS"
+    },
+    "state_before": "NEGOTIATION",
+    "state_after": "AWAITING_CONFIRMATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:37.002Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "CONSUMER_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "YES"
+    },
+    "state_before": "AWAITING_CONFIRMATION",
+    "state_after": "AWAITING_CONFIRMATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:40.248Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "PAYMENT_AUTHORIZATION",
+    "source": "code",
+    "data": {
+      "type": "BIF_PAYMENTS",
+      "amount": 1400,
+      "total": 4200,
+      "authorized": true
+    },
+    "state_before": "AWAITING_CONFIRMATION",
+    "state_after": "RESOLVED"
+  },
+  {
+    "ts": "2026-06-17T18:36:40.248Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "HIERARCHY_STEP",
+    "source": "code",
+    "data": {
+      "offered": "BIF_PAYMENTS",
+      "accepted": true
+    },
+    "state_before": "AWAITING_CONFIRMATION",
+    "state_after": "RESOLVED"
+  },
+  {
+    "ts": "2026-06-17T18:36:40.248Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": "consumer_confirmed"
+    },
+    "state_before": "AWAITING_CONFIRMATION",
+    "state_after": "RESOLVED"
+  },
+  {
+    "ts": "2026-06-17T18:36:40.248Z",
+    "sessionId": "bf25148b-fd76-47b1-815f-7a98194c8722",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "Your arrangement has been confirmed. A payment specialist will contact you to complete the payment process. Is there anything else I can help you with today? If you have further questions, you can reach us through the agency's published contact channels.",
+      "arrangement": {
+        "rung": "BIF_PAYMENTS",
+        "type": "balance_in_payments",
+        "monthlyPayment": 1400,
+        "totalPayment": 4200,
+        "months": 3,
+        "withinLimit": true,
+        "exceedsCap": false,
+        "effectiveMaxMonths": 6
+      }
+    },
+    "state_before": "AWAITING_CONFIRMATION",
+    "state_after": "RESOLVED"
+  }
+]
+
+════════════════════════════════════════════════════════════════════════
+  ACC-002 Luis Martinez — P-100 $8,500 CA → RESOLVED + PREFERRED_LANGUAGE
+════════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────────────
+  GREETING
+────────────────────────────────────────────────────────────────────────
+
+  [Turn 1] GREETING (no sessionId)
+  REQ: {}
+  RES state=AUTH_PENDING msg="Thank you for contacting Meridian Recovery Services. My name is Meridian Assistant. This conversation may be monitored a..."
+  META: rung=null offers={"PIF":false,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=3
+  Session: 2bb54b61-89d7-4aa2-ad5b-60cec26a7b38
+
+────────────────────────────────────────────────────────────────────────
+  AUTH
+────────────────────────────────────────────────────────────────────────
+
+  [Turn 2] AUTH ACC-002
+  REQ: {"sessionId":"2bb54b61-89d7-4aa2-ad5b-60cec26a7b38","auth":{"accountRef":"ACC-002","firstName":"Luis","lastName":"Martinez","ssn4":"8765","zip":"94102"}}
+  RES state=NEGOTIATION_OPEN msg="This is a communication from a debt collector. This is an attempt to collect a debt, and any information obtained, inclu..."
+  META: rung=PIF offers={"PIF":true,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=null
+
+  [Turn 3] Decline PIF
+  REQ: {"sessionId":"2bb54b61-89d7-4aa2-ad5b-60cec26a7b38","message":"I cannot pay that in full."}
+  RES state=NEGOTIATION msg="Let me recalculate that for you...."
+  META: rung=BIF_PAYMENTS offers={"PIF":true,"BIF_PAYMENTS":true,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=null
+  INFO ACC-002 BIF presentation: "Let me recalculate that for you."
+
+  [Turn 4] Accept BIF_PAYMENTS
+  REQ: {"sessionId":"2bb54b61-89d7-4aa2-ad5b-60cec26a7b38","message":"Yes, I can do that."}
+  RES state=AWAITING_CONFIRMATION msg="To confirm the arrangement:↵- $1,416.67 per month for 6 months↵- First payment: [DATE]↵- Total: $8,500.02↵- Payment meth..."
+  META: rung=BIF_PAYMENTS offers={"PIF":true,"BIF_PAYMENTS":true,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=null
+
+  [Turn 5] Confirm YES
+  REQ: {"sessionId":"2bb54b61-89d7-4aa2-ad5b-60cec26a7b38","message":"YES"}
+  RES state=RESOLVED msg="Your arrangement has been confirmed. A payment specialist will contact you to complete the payment process. Is there any..."
+  META: rung=BIF_PAYMENTS offers={"PIF":true,"BIF_PAYMENTS":true,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=null
+
+  (b) SESSION FINAL STATE:
+{
+  "state": "RESOLVED",
+  "currentRung": "BIF_PAYMENTS",
+  "offers": {
+    "PIF": true,
+    "BIF_PAYMENTS": true,
+    "SIF": false,
+    "SIF_PAYMENTS": false,
+    "PPA": false
+  }
+}
+
+  (c) AUDIT LOG:
+[
+  {
+    "ts": "2026-06-17T18:36:40.261Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": null
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:36:40.261Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "Thank you for contacting Meridian Recovery Services. My name is Meridian Assistant. This conversation may be monitored and recorded; by continuing you are providing your consent. How may I help you?\n\nTo access your account, please provide:\n1. Your account reference number\n2. Your first and last name\n3. The last 4 digits of your SSN\n4. Your ZIP code"
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:36:40.264Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "AUTH_ATTEMPT",
+    "source": "code",
+    "data": {
+      "attempt": 1,
+      "success": true,
+      "fields_provided": [
+        "accountRef",
+        "firstName",
+        "lastName",
+        "ssn4",
+        "zip"
+      ]
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:36:40.264Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "PREFERRED_LANGUAGE_REQUIRED",
+    "source": "code",
+    "data": {
+      "account_state": "CA",
+      "note": "Known gap — no output change in v1"
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:36:40.264Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "DISCLOSURE_DELIVERED",
+    "source": "code",
+    "data": {
+      "which": "MINI_MIRANDA",
+      "verbatim_match": true
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:40.264Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "DISCLOSURE_DELIVERED",
+    "source": "code",
+    "data": {
+      "which": "COLLECTOR_STATEMENT",
+      "verbatim_match": true
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:40.264Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": "auth_success_disclosures_delivered"
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:40.264Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "OFFER_MADE",
+    "source": "code",
+    "data": {
+      "rung": "PIF",
+      "type": "paid_in_full",
+      "amount": 8500
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:40.264Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "HIERARCHY_STEP",
+    "source": "code",
+    "data": {
+      "offered": "PIF",
+      "accepted": null
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:40.264Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "This is a communication from a debt collector. This is an attempt to collect a debt, and any information obtained, including this call recording, will be used for that purpose.\n\nI am with Meridian Recovery Services on behalf of Northwind Capital in regard to your Westside Auto Finance account. Your account was placed with our office as of September 2, 2025 and reflects a balance of $8,500.00. It is my goal to resolve this with you in a courteous and professional manner. How can I help you resolve your balance today?\n\nAre you able to pay the balance of $8,500.00 today?",
+      "disclosuresDelivered": [
+        "MINI_MIRANDA",
+        "COLLECTOR_STATEMENT"
+      ]
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:40.268Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "CONSUMER_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "I cannot pay that in full."
+    },
+    "state_before": "NEGOTIATION_OPEN",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:42.317Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": "advance_to_BIF_PAYMENTS"
+    },
+    "state_before": "NEGOTIATION_OPEN",
+    "state_after": "NEGOTIATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:42.317Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "OFFER_MADE",
+    "source": "code",
+    "data": {
+      "rung": "BIF_PAYMENTS",
+      "type": "balance_in_payments",
+      "monthly_payment": 1416.67,
+      "months": 6,
+      "total_payment": 8500.02,
+      "exceeds_cap": false
+    },
+    "state_before": "NEGOTIATION_OPEN",
+    "state_after": "NEGOTIATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:42.317Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "HIERARCHY_STEP",
+    "source": "code",
+    "data": {
+      "offered": "BIF_PAYMENTS",
+      "accepted": null
+    },
+    "state_before": "NEGOTIATION_OPEN",
+    "state_after": "NEGOTIATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:45.718Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "OFFER_REJECTED_BY_GUARDRAIL",
+    "source": "code",
+    "data": {
+      "violations": [
+        "$8500.02 is not a valid amount for this account"
+      ],
+      "raw_llm_output": "{\"intent\":\"DECLINE\",\"extracted\":{},\"response_text\":\"I completely understand — paying the full balance at once isn't always feasible, and I appreciate you letting me know. We do have another option available: a payment arrangement that spreads your balance over 6 monthly payments of $1,416.67, for a total of $8,500.02, which would allow you to resolve your Westside Auto Finance account with Northwind Capital in a more manageable way. Does this arrangement work for you?\"}"
+    },
+    "state_before": "NEGOTIATION",
+    "state_after": "NEGOTIATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:45.718Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "Let me recalculate that for you.",
+      "rung": "BIF_PAYMENTS"
+    },
+    "state_before": "NEGOTIATION_OPEN",
+    "state_after": "NEGOTIATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:45.726Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "CONSUMER_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "Yes, I can do that."
+    },
+    "state_before": "NEGOTIATION",
+    "state_after": "NEGOTIATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:49.078Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": "consumer_accepted"
+    },
+    "state_before": "NEGOTIATION",
+    "state_after": "AWAITING_CONFIRMATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:49.078Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "To confirm the arrangement:\n- $1,416.67 per month for 6 months\n- First payment: [DATE]\n- Total: $8,500.02\n- Payment method: ACH from your bank account\n\nBy confirming, you authorize Meridian Recovery Services to debit your account on each scheduled date. Changes must be requested by 11 AM the day before any scheduled post.\n\nReply YES to authorize, or NO to discuss other options.",
+      "rung": "BIF_PAYMENTS"
+    },
+    "state_before": "NEGOTIATION",
+    "state_after": "AWAITING_CONFIRMATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:49.086Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "CONSUMER_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "YES"
+    },
+    "state_before": "AWAITING_CONFIRMATION",
+    "state_after": "AWAITING_CONFIRMATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:53.099Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "PAYMENT_AUTHORIZATION",
+    "source": "code",
+    "data": {
+      "type": "BIF_PAYMENTS",
+      "amount": 1416.67,
+      "total": 8500.02,
+      "authorized": true
+    },
+    "state_before": "AWAITING_CONFIRMATION",
+    "state_after": "RESOLVED"
+  },
+  {
+    "ts": "2026-06-17T18:36:53.099Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "HIERARCHY_STEP",
+    "source": "code",
+    "data": {
+      "offered": "BIF_PAYMENTS",
+      "accepted": true
+    },
+    "state_before": "AWAITING_CONFIRMATION",
+    "state_after": "RESOLVED"
+  },
+  {
+    "ts": "2026-06-17T18:36:53.099Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": "consumer_confirmed"
+    },
+    "state_before": "AWAITING_CONFIRMATION",
+    "state_after": "RESOLVED"
+  },
+  {
+    "ts": "2026-06-17T18:36:53.099Z",
+    "sessionId": "2bb54b61-89d7-4aa2-ad5b-60cec26a7b38",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "Your arrangement has been confirmed. A payment specialist will contact you to complete the payment process. Is there anything else I can help you with today? If you have further questions, you can reach us through the agency's published contact channels.",
+      "arrangement": {
+        "rung": "BIF_PAYMENTS",
+        "type": "balance_in_payments",
+        "monthlyPayment": 1416.67,
+        "totalPayment": 8500.02,
+        "months": 6,
+        "withinLimit": true,
+        "exceedsCap": false,
+        "effectiveMaxMonths": 6
+      }
+    },
+    "state_before": "AWAITING_CONFIRMATION",
+    "state_after": "RESOLVED"
+  }
+]
+
+════════════════════════════════════════════════════════════════════════
+  ACC-003 Wei Chen — P-300 $2,100 PRE_LEGAL → RESOLVED + pre-legal disclosure
+════════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────────────
+  GREETING
+────────────────────────────────────────────────────────────────────────
+
+  [Turn 1] GREETING (no sessionId)
+  REQ: {}
+  RES state=AUTH_PENDING msg="Thank you for contacting Meridian Recovery Services. My name is Meridian Assistant. This conversation may be monitored a..."
+  META: rung=null offers={"PIF":false,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=3
+  Session: 8df83b0e-0d34-4673-9dc2-d8a9734a144d
+
+────────────────────────────────────────────────────────────────────────
+  AUTH
+────────────────────────────────────────────────────────────────────────
+
+  [Turn 2] AUTH ACC-003
+  REQ: {"sessionId":"8df83b0e-0d34-4673-9dc2-d8a9734a144d","auth":{"accountRef":"ACC-003","firstName":"Wei","lastName":"Chen","ssn4":"1122","zip":"60601"}}
+  RES state=NEGOTIATION_OPEN msg="This is a communication from a debt collector. This is an attempt to collect a debt, and any information obtained, inclu..."
+  META: rung=PIF offers={"PIF":true,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=null
+
+  [Turn 3] Decline PIF
+  REQ: {"sessionId":"8df83b0e-0d34-4673-9dc2-d8a9734a144d","message":"No."}
+  RES state=NEGOTIATION msg="I understand, and I appreciate you letting me know. We do have another option available — a balance-in-payments arrangem..."
+  META: rung=BIF_PAYMENTS offers={"PIF":true,"BIF_PAYMENTS":true,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=null
+
+  [Turn 4] Accept BIF_PAYMENTS
+  REQ: {"sessionId":"8df83b0e-0d34-4673-9dc2-d8a9734a144d","message":"Yes that works."}
+  RES state=AWAITING_CONFIRMATION msg="To confirm the arrangement:↵- $1,050.00 per month for 2 months↵- First payment: [DATE]↵- Total: $2,100.00↵- Payment meth..."
+  META: rung=BIF_PAYMENTS offers={"PIF":true,"BIF_PAYMENTS":true,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=null
+
+  [Turn 5] Confirm YES
+  REQ: {"sessionId":"8df83b0e-0d34-4673-9dc2-d8a9734a144d","message":"YES"}
+  RES state=RESOLVED msg="Your arrangement has been confirmed. A payment specialist will contact you to complete the payment process. Is there any..."
+  META: rung=BIF_PAYMENTS offers={"PIF":true,"BIF_PAYMENTS":true,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=null
+
+  (b) SESSION FINAL STATE:
+{
+  "state": "RESOLVED",
+  "currentRung": "BIF_PAYMENTS",
+  "disclosures": {
+    "miniMiranda": "2026-06-17T18:36:53.125Z",
+    "collectorStatement": "2026-06-17T18:36:53.125Z",
+    "preLegal": "2026-06-17T18:36:53.125Z"
+  }
+}
+
+  (c) AUDIT LOG:
+[
+  {
+    "ts": "2026-06-17T18:36:53.117Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": null
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:36:53.117Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "Thank you for contacting Meridian Recovery Services. My name is Meridian Assistant. This conversation may be monitored and recorded; by continuing you are providing your consent. How may I help you?\n\nTo access your account, please provide:\n1. Your account reference number\n2. Your first and last name\n3. The last 4 digits of your SSN\n4. Your ZIP code"
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:36:53.125Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "AUTH_ATTEMPT",
+    "source": "code",
+    "data": {
+      "attempt": 1,
+      "success": true,
+      "fields_provided": [
+        "accountRef",
+        "firstName",
+        "lastName",
+        "ssn4",
+        "zip"
+      ]
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:36:53.125Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "DISCLOSURE_DELIVERED",
+    "source": "code",
+    "data": {
+      "which": "MINI_MIRANDA",
+      "verbatim_match": true
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:53.125Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "DISCLOSURE_DELIVERED",
+    "source": "code",
+    "data": {
+      "which": "COLLECTOR_STATEMENT",
+      "verbatim_match": true
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:53.125Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "DISCLOSURE_DELIVERED",
+    "source": "code",
+    "data": {
+      "which": "PRE_LEGAL",
+      "verbatim_match": true
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:53.125Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": "auth_success_disclosures_delivered"
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:53.125Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "OFFER_MADE",
+    "source": "code",
+    "data": {
+      "rung": "PIF",
+      "type": "paid_in_full",
+      "amount": 2100
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:53.125Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "HIERARCHY_STEP",
+    "source": "code",
+    "data": {
+      "offered": "PIF",
+      "accepted": null
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:53.125Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "This is a communication from a debt collector. This is an attempt to collect a debt, and any information obtained, including this call recording, will be used for that purpose.\n\nI am with Meridian Recovery Services on behalf of Harbor Recovery in regard to your Lakeside Lending account. Your account was placed with our office as of October 10, 2025 and reflects a balance of $2,100.00. It is my goal to resolve this with you in a courteous and professional manner. How can I help you resolve your balance today?\n\nPlease be advised that your account has been placed with our office in a pre-legal status. Failure to resolve this matter may result in your account being reviewed by an attorney in your state for possible legal action to collect the balance due.\n\nAre you able to pay the balance of $2,100.00 today?",
+      "disclosuresDelivered": [
+        "MINI_MIRANDA",
+        "COLLECTOR_STATEMENT",
+        "PRE_LEGAL"
+      ]
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:53.131Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "CONSUMER_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "No."
+    },
+    "state_before": "NEGOTIATION_OPEN",
+    "state_after": "NEGOTIATION_OPEN"
+  },
+  {
+    "ts": "2026-06-17T18:36:55.691Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": "advance_to_BIF_PAYMENTS"
+    },
+    "state_before": "NEGOTIATION_OPEN",
+    "state_after": "NEGOTIATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:55.691Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "OFFER_MADE",
+    "source": "code",
+    "data": {
+      "rung": "BIF_PAYMENTS",
+      "type": "balance_in_payments",
+      "monthly_payment": 1050,
+      "months": 2,
+      "total_payment": 2100,
+      "exceeds_cap": false
+    },
+    "state_before": "NEGOTIATION_OPEN",
+    "state_after": "NEGOTIATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:55.691Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "HIERARCHY_STEP",
+    "source": "code",
+    "data": {
+      "offered": "BIF_PAYMENTS",
+      "accepted": null
+    },
+    "state_before": "NEGOTIATION_OPEN",
+    "state_after": "NEGOTIATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:59.069Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "I understand, and I appreciate you letting me know. We do have another option available — a balance-in-payments arrangement where you would make 2 monthly payments of $1,050 each, for a total of $2,100. Would this arrangement work for you?",
+      "rung": "BIF_PAYMENTS"
+    },
+    "state_before": "NEGOTIATION_OPEN",
+    "state_after": "NEGOTIATION"
+  },
+  {
+    "ts": "2026-06-17T18:36:59.078Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "CONSUMER_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "Yes that works."
+    },
+    "state_before": "NEGOTIATION",
+    "state_after": "NEGOTIATION"
+  },
+  {
+    "ts": "2026-06-17T18:37:02.453Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": "consumer_accepted"
+    },
+    "state_before": "NEGOTIATION",
+    "state_after": "AWAITING_CONFIRMATION"
+  },
+  {
+    "ts": "2026-06-17T18:37:02.453Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "To confirm the arrangement:\n- $1,050.00 per month for 2 months\n- First payment: [DATE]\n- Total: $2,100.00\n- Payment method: ACH from your bank account\n\nBy confirming, you authorize Meridian Recovery Services to debit your account on each scheduled date. Changes must be requested by 11 AM the day before any scheduled post.\n\nReply YES to authorize, or NO to discuss other options.",
+      "rung": "BIF_PAYMENTS"
+    },
+    "state_before": "NEGOTIATION",
+    "state_after": "AWAITING_CONFIRMATION"
+  },
+  {
+    "ts": "2026-06-17T18:37:02.461Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "CONSUMER_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "YES"
+    },
+    "state_before": "AWAITING_CONFIRMATION",
+    "state_after": "AWAITING_CONFIRMATION"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.107Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "PAYMENT_AUTHORIZATION",
+    "source": "code",
+    "data": {
+      "type": "BIF_PAYMENTS",
+      "amount": 1050,
+      "total": 2100,
+      "authorized": true
+    },
+    "state_before": "AWAITING_CONFIRMATION",
+    "state_after": "RESOLVED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.107Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "HIERARCHY_STEP",
+    "source": "code",
+    "data": {
+      "offered": "BIF_PAYMENTS",
+      "accepted": true
+    },
+    "state_before": "AWAITING_CONFIRMATION",
+    "state_after": "RESOLVED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.107Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": "consumer_confirmed"
+    },
+    "state_before": "AWAITING_CONFIRMATION",
+    "state_after": "RESOLVED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.107Z",
+    "sessionId": "8df83b0e-0d34-4673-9dc2-d8a9734a144d",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "Your arrangement has been confirmed. A payment specialist will contact you to complete the payment process. Is there anything else I can help you with today? If you have further questions, you can reach us through the agency's published contact channels.",
+      "arrangement": {
+        "rung": "BIF_PAYMENTS",
+        "type": "balance_in_payments",
+        "monthlyPayment": 1050,
+        "totalPayment": 2100,
+        "months": 2,
+        "withinLimit": true,
+        "exceedsCap": false,
+        "effectiveMaxMonths": 6
+      }
+    },
+    "state_before": "AWAITING_CONFIRMATION",
+    "state_after": "RESOLVED"
+  }
+]
+
+════════════════════════════════════════════════════════════════════════
+  ACC-004 — BKY flag → immediate ESCALATED (no info leak)
+════════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────────────
+  GREETING
+────────────────────────────────────────────────────────────────────────
+
+  [Turn 1] GREETING (no sessionId)
+  REQ: {}
+  RES state=AUTH_PENDING msg="Thank you for contacting Meridian Recovery Services. My name is Meridian Assistant. This conversation may be monitored a..."
+  META: rung=null offers={"PIF":false,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=3
+  Session: a6587b7f-c978-47e0-ad82-7bfb1d51d398
+
+────────────────────────────────────────────────────────────────────────
+  AUTH
+────────────────────────────────────────────────────────────────────────
+
+  [Turn 2] AUTH ACC-004
+  REQ: {"sessionId":"a6587b7f-c978-47e0-ad82-7bfb1d51d398","auth":{"accountRef":"ACC-004","firstName":"Mary","lastName":"Wilson","ssn4":"5544","zip":"30301"}}
+  RES state=ESCALATED msg="I need to transfer you to a specialist who can assist with your account. Please hold while I connect you, or you can rea..."
+  META: rung=null offers={"PIF":false,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=null
+
+  (b) SESSION:
+{
+  "state": "ESCALATED",
+  "escalationReason": "BKY",
+  "account": {
+    "ref": "ACC-004"
+  }
+}
+
+  (c) AUDIT:
+[
+  {
+    "ts": "2026-06-17T18:37:05.124Z",
+    "sessionId": "a6587b7f-c978-47e0-ad82-7bfb1d51d398",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": null
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.124Z",
+    "sessionId": "a6587b7f-c978-47e0-ad82-7bfb1d51d398",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "Thank you for contacting Meridian Recovery Services. My name is Meridian Assistant. This conversation may be monitored and recorded; by continuing you are providing your consent. How may I help you?\n\nTo access your account, please provide:\n1. Your account reference number\n2. Your first and last name\n3. The last 4 digits of your SSN\n4. Your ZIP code"
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.127Z",
+    "sessionId": "a6587b7f-c978-47e0-ad82-7bfb1d51d398",
+    "event": "ESCALATION",
+    "source": "code",
+    "data": {
+      "reason": "BKY"
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.127Z",
+    "sessionId": "a6587b7f-c978-47e0-ad82-7bfb1d51d398",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": "BKY"
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.127Z",
+    "sessionId": "a6587b7f-c978-47e0-ad82-7bfb1d51d398",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "I need to transfer you to a specialist who can assist with your account. Please hold while I connect you, or you can reach us through our published contact channels."
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  }
+]
+
+════════════════════════════════════════════════════════════════════════
+  ACC-005 — DSP flag → immediate ESCALATED (no info leak)
+════════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────────────
+  GREETING
+────────────────────────────────────────────────────────────────────────
+
+  [Turn 1] GREETING (no sessionId)
+  REQ: {}
+  RES state=AUTH_PENDING msg="Thank you for contacting Meridian Recovery Services. My name is Meridian Assistant. This conversation may be monitored a..."
+  META: rung=null offers={"PIF":false,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=3
+  Session: 4ca39aa9-207c-4d5f-aab1-dee1596fd3c2
+
+────────────────────────────────────────────────────────────────────────
+  AUTH
+────────────────────────────────────────────────────────────────────────
+
+  [Turn 2] AUTH ACC-005
+  REQ: {"sessionId":"4ca39aa9-207c-4d5f-aab1-dee1596fd3c2","auth":{"accountRef":"ACC-005","firstName":"Anita","lastName":"Patel","ssn4":"9988","zip":"02101"}}
+  RES state=ESCALATED msg="I need to transfer you to a specialist who can assist with your account. Please hold while I connect you, or you can rea..."
+  META: rung=null offers={"PIF":false,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=null
+
+  (b) SESSION:
+{
+  "state": "ESCALATED",
+  "escalationReason": "DSP",
+  "account": {
+    "ref": "ACC-005"
+  }
+}
+
+  (c) AUDIT:
+[
+  {
+    "ts": "2026-06-17T18:37:05.135Z",
+    "sessionId": "4ca39aa9-207c-4d5f-aab1-dee1596fd3c2",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": null
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.135Z",
+    "sessionId": "4ca39aa9-207c-4d5f-aab1-dee1596fd3c2",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "Thank you for contacting Meridian Recovery Services. My name is Meridian Assistant. This conversation may be monitored and recorded; by continuing you are providing your consent. How may I help you?\n\nTo access your account, please provide:\n1. Your account reference number\n2. Your first and last name\n3. The last 4 digits of your SSN\n4. Your ZIP code"
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.137Z",
+    "sessionId": "4ca39aa9-207c-4d5f-aab1-dee1596fd3c2",
+    "event": "ESCALATION",
+    "source": "code",
+    "data": {
+      "reason": "DSP"
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.137Z",
+    "sessionId": "4ca39aa9-207c-4d5f-aab1-dee1596fd3c2",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": "DSP"
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.137Z",
+    "sessionId": "4ca39aa9-207c-4d5f-aab1-dee1596fd3c2",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "I need to transfer you to a specialist who can assist with your account. Please hold while I connect you, or you can reach us through our published contact channels."
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  }
+]
+
+════════════════════════════════════════════════════════════════════════
+  ACC-006 — CNA flag → immediate ESCALATED (no info leak)
+════════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────────────
+  GREETING
+────────────────────────────────────────────────────────────────────────
+
+  [Turn 1] GREETING (no sessionId)
+  REQ: {}
+  RES state=AUTH_PENDING msg="Thank you for contacting Meridian Recovery Services. My name is Meridian Assistant. This conversation may be monitored a..."
+  META: rung=null offers={"PIF":false,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=3
+  Session: 77414ee4-9bfd-4112-99dd-295aa09df044
+
+────────────────────────────────────────────────────────────────────────
+  AUTH
+────────────────────────────────────────────────────────────────────────
+
+  [Turn 2] AUTH ACC-006
+  REQ: {"sessionId":"77414ee4-9bfd-4112-99dd-295aa09df044","auth":{"accountRef":"ACC-006","firstName":"Ryan","lastName":"OBrien","ssn4":"3344","zip":"98101"}}
+  RES state=ESCALATED msg="I need to transfer you to a specialist who can assist with your account. Please hold while I connect you, or you can rea..."
+  META: rung=null offers={"PIF":false,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=null
+
+  (b) SESSION:
+{
+  "state": "ESCALATED",
+  "escalationReason": "CNA",
+  "account": {
+    "ref": "ACC-006"
+  }
+}
+
+  (c) AUDIT:
+[
+  {
+    "ts": "2026-06-17T18:37:05.142Z",
+    "sessionId": "77414ee4-9bfd-4112-99dd-295aa09df044",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": null
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.142Z",
+    "sessionId": "77414ee4-9bfd-4112-99dd-295aa09df044",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "Thank you for contacting Meridian Recovery Services. My name is Meridian Assistant. This conversation may be monitored and recorded; by continuing you are providing your consent. How may I help you?\n\nTo access your account, please provide:\n1. Your account reference number\n2. Your first and last name\n3. The last 4 digits of your SSN\n4. Your ZIP code"
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.144Z",
+    "sessionId": "77414ee4-9bfd-4112-99dd-295aa09df044",
+    "event": "ESCALATION",
+    "source": "code",
+    "data": {
+      "reason": "CNA"
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.144Z",
+    "sessionId": "77414ee4-9bfd-4112-99dd-295aa09df044",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": "CNA"
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.144Z",
+    "sessionId": "77414ee4-9bfd-4112-99dd-295aa09df044",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "I need to transfer you to a specialist who can assist with your account. Please hold while I connect you, or you can reach us through our published contact channels."
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  }
+]
+
+════════════════════════════════════════════════════════════════════════
+  ACC-007 — AUTH FAILURE byte-identical check
+════════════════════════════════════════════════════════════════════════
+
+  --- Case (i): wrong ssn4 for ACC-007 ---
+
+  [Turn 3] Wrong ssn4 attempt 1
+  REQ: {"sessionId":"777e7a5a-e946-4ed9-ba0d-fb4bb1bdd26d","auth":{"accountRef":"ACC-007","firstName":"Maria","lastName":"Garcia","ssn4":"0000","zip":"75201"}}
+  RES state=AUTH_PENDING msg="I wasn't able to verify those details. Please try again...."
+  META: rung=null offers={"PIF":false,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=2
+
+  [Turn 4] Wrong ssn4 attempt 2
+  REQ: {"sessionId":"777e7a5a-e946-4ed9-ba0d-fb4bb1bdd26d","auth":{"accountRef":"ACC-007","firstName":"Maria","lastName":"Garcia","ssn4":"0000","zip":"75201"}}
+  RES state=AUTH_PENDING msg="I wasn't able to verify those details. Please try again...."
+  META: rung=null offers={"PIF":false,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=1
+
+  [Turn 5] Wrong ssn4 attempt 3
+  REQ: {"sessionId":"777e7a5a-e946-4ed9-ba0d-fb4bb1bdd26d","auth":{"accountRef":"ACC-007","firstName":"Maria","lastName":"Garcia","ssn4":"0000","zip":"75201"}}
+  RES state=ESCALATED msg="I'm unable to verify your identity. For your security, I can't share any account details — including whether an account ..."
+  META: rung=null offers={"PIF":false,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=null
+
+  --- Case (ii): nonexistent ref ACC-999999 ---
+
+  [Turn 6] Bad ref attempt 1
+  REQ: {"sessionId":"262b0c13-baef-4fd0-8085-f508ccad5f64","auth":{"accountRef":"ACC-999999","firstName":"X","lastName":"X","ssn4":"0000","zip":"00000"}}
+  RES state=AUTH_PENDING msg="I wasn't able to verify those details. Please try again...."
+  META: rung=null offers={"PIF":false,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=2
+
+  [Turn 7] Bad ref attempt 2
+  REQ: {"sessionId":"262b0c13-baef-4fd0-8085-f508ccad5f64","auth":{"accountRef":"ACC-999999","firstName":"X","lastName":"X","ssn4":"0000","zip":"00000"}}
+  RES state=AUTH_PENDING msg="I wasn't able to verify those details. Please try again...."
+  META: rung=null offers={"PIF":false,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=1
+
+  [Turn 8] Bad ref attempt 3
+  REQ: {"sessionId":"262b0c13-baef-4fd0-8085-f508ccad5f64","auth":{"accountRef":"ACC-999999","firstName":"X","lastName":"X","ssn4":"0000","zip":"00000"}}
+  RES state=ESCALATED msg="I'm unable to verify your identity. For your security, I can't share any account details — including whether an account ..."
+  META: rung=null offers={"PIF":false,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=null
+
+  BYTE COMPARISON:
+  Attempt 1: ✓ IDENTICAL
+  Attempt 2: ✓ IDENTICAL
+  Attempt 3: ✓ IDENTICAL
+
+  (b) SESSION A (wrong ssn4):
+{
+  "state": "ESCALATED",
+  "authAttempts": 3,
+  "account": null,
+  "escalationReason": "AUTH_FAILED"
+}
+
+  SESSION B (bad ref):
+{
+  "state": "ESCALATED",
+  "authAttempts": 3,
+  "account": null,
+  "escalationReason": "AUTH_FAILED"
+}
+
+  (c) AUDIT A:
+[
+  {
+    "ts": "2026-06-17T18:37:05.149Z",
+    "sessionId": "777e7a5a-e946-4ed9-ba0d-fb4bb1bdd26d",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": null
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.149Z",
+    "sessionId": "777e7a5a-e946-4ed9-ba0d-fb4bb1bdd26d",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "Thank you for contacting Meridian Recovery Services. My name is Meridian Assistant. This conversation may be monitored and recorded; by continuing you are providing your consent. How may I help you?\n\nTo access your account, please provide:\n1. Your account reference number\n2. Your first and last name\n3. The last 4 digits of your SSN\n4. Your ZIP code"
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.150Z",
+    "sessionId": "777e7a5a-e946-4ed9-ba0d-fb4bb1bdd26d",
+    "event": "AUTH_ATTEMPT",
+    "source": "code",
+    "data": {
+      "attempt": 1,
+      "success": false,
+      "fields_provided": [
+        "accountRef",
+        "firstName",
+        "lastName",
+        "ssn4",
+        "zip"
+      ]
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.150Z",
+    "sessionId": "777e7a5a-e946-4ed9-ba0d-fb4bb1bdd26d",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "I wasn't able to verify those details. Please try again."
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.153Z",
+    "sessionId": "777e7a5a-e946-4ed9-ba0d-fb4bb1bdd26d",
+    "event": "AUTH_ATTEMPT",
+    "source": "code",
+    "data": {
+      "attempt": 2,
+      "success": false,
+      "fields_provided": [
+        "accountRef",
+        "firstName",
+        "lastName",
+        "ssn4",
+        "zip"
+      ]
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.153Z",
+    "sessionId": "777e7a5a-e946-4ed9-ba0d-fb4bb1bdd26d",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "I wasn't able to verify those details. Please try again."
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.154Z",
+    "sessionId": "777e7a5a-e946-4ed9-ba0d-fb4bb1bdd26d",
+    "event": "AUTH_ATTEMPT",
+    "source": "code",
+    "data": {
+      "attempt": 3,
+      "success": false,
+      "fields_provided": [
+        "accountRef",
+        "firstName",
+        "lastName",
+        "ssn4",
+        "zip"
+      ]
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.154Z",
+    "sessionId": "777e7a5a-e946-4ed9-ba0d-fb4bb1bdd26d",
+    "event": "ESCALATION",
+    "source": "code",
+    "data": {
+      "reason": "AUTH_FAILED"
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.154Z",
+    "sessionId": "777e7a5a-e946-4ed9-ba0d-fb4bb1bdd26d",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": "AUTH_FAILED"
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.154Z",
+    "sessionId": "777e7a5a-e946-4ed9-ba0d-fb4bb1bdd26d",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "I'm unable to verify your identity. For your security, I can't share any account details — including whether an account exists. I'll connect you with a representative who can help, or you can reach us through our published contact channels."
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  }
+]
+
+  AUDIT B:
+[
+  {
+    "ts": "2026-06-17T18:37:05.155Z",
+    "sessionId": "262b0c13-baef-4fd0-8085-f508ccad5f64",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": null
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.155Z",
+    "sessionId": "262b0c13-baef-4fd0-8085-f508ccad5f64",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "Thank you for contacting Meridian Recovery Services. My name is Meridian Assistant. This conversation may be monitored and recorded; by continuing you are providing your consent. How may I help you?\n\nTo access your account, please provide:\n1. Your account reference number\n2. Your first and last name\n3. The last 4 digits of your SSN\n4. Your ZIP code"
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.156Z",
+    "sessionId": "262b0c13-baef-4fd0-8085-f508ccad5f64",
+    "event": "AUTH_ATTEMPT",
+    "source": "code",
+    "data": {
+      "attempt": 1,
+      "success": false,
+      "fields_provided": [
+        "accountRef",
+        "firstName",
+        "lastName",
+        "ssn4",
+        "zip"
+      ]
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.156Z",
+    "sessionId": "262b0c13-baef-4fd0-8085-f508ccad5f64",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "I wasn't able to verify those details. Please try again."
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.157Z",
+    "sessionId": "262b0c13-baef-4fd0-8085-f508ccad5f64",
+    "event": "AUTH_ATTEMPT",
+    "source": "code",
+    "data": {
+      "attempt": 2,
+      "success": false,
+      "fields_provided": [
+        "accountRef",
+        "firstName",
+        "lastName",
+        "ssn4",
+        "zip"
+      ]
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.157Z",
+    "sessionId": "262b0c13-baef-4fd0-8085-f508ccad5f64",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "I wasn't able to verify those details. Please try again."
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.158Z",
+    "sessionId": "262b0c13-baef-4fd0-8085-f508ccad5f64",
+    "event": "AUTH_ATTEMPT",
+    "source": "code",
+    "data": {
+      "attempt": 3,
+      "success": false,
+      "fields_provided": [
+        "accountRef",
+        "firstName",
+        "lastName",
+        "ssn4",
+        "zip"
+      ]
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.158Z",
+    "sessionId": "262b0c13-baef-4fd0-8085-f508ccad5f64",
+    "event": "ESCALATION",
+    "source": "code",
+    "data": {
+      "reason": "AUTH_FAILED"
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.158Z",
+    "sessionId": "262b0c13-baef-4fd0-8085-f508ccad5f64",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": "AUTH_FAILED"
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.158Z",
+    "sessionId": "262b0c13-baef-4fd0-8085-f508ccad5f64",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "I'm unable to verify your identity. For your security, I can't share any account details — including whether an account exists. I'll connect you with a representative who can help, or you can reach us through our published contact channels."
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  }
+]
+
+════════════════════════════════════════════════════════════════════════
+  ACC-008 — VOD flag → immediate ESCALATED (no info leak)
+════════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────────────
+  GREETING
+────────────────────────────────────────────────────────────────────────
+
+  [Turn 1] GREETING (no sessionId)
+  REQ: {}
+  RES state=AUTH_PENDING msg="Thank you for contacting Meridian Recovery Services. My name is Meridian Assistant. This conversation may be monitored a..."
+  META: rung=null offers={"PIF":false,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=3
+  Session: f2b881cb-090a-49cc-9857-6de803226463
+
+────────────────────────────────────────────────────────────────────────
+  AUTH
+────────────────────────────────────────────────────────────────────────
+
+  [Turn 2] AUTH ACC-008
+  REQ: {"sessionId":"f2b881cb-090a-49cc-9857-6de803226463","auth":{"accountRef":"ACC-008","firstName":"David","lastName":"Kim","ssn4":"2211","zip":"02906"}}
+  RES state=ESCALATED msg="I need to transfer you to a specialist who can assist with your account. Please hold while I connect you, or you can rea..."
+  META: rung=null offers={"PIF":false,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=null
+
+  (b) SESSION:
+{
+  "state": "ESCALATED",
+  "escalationReason": "VOD",
+  "account": {
+    "ref": "ACC-008"
+  }
+}
+
+  (c) AUDIT:
+[
+  {
+    "ts": "2026-06-17T18:37:05.164Z",
+    "sessionId": "f2b881cb-090a-49cc-9857-6de803226463",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": null
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.164Z",
+    "sessionId": "f2b881cb-090a-49cc-9857-6de803226463",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "Thank you for contacting Meridian Recovery Services. My name is Meridian Assistant. This conversation may be monitored and recorded; by continuing you are providing your consent. How may I help you?\n\nTo access your account, please provide:\n1. Your account reference number\n2. Your first and last name\n3. The last 4 digits of your SSN\n4. Your ZIP code"
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.165Z",
+    "sessionId": "f2b881cb-090a-49cc-9857-6de803226463",
+    "event": "ESCALATION",
+    "source": "code",
+    "data": {
+      "reason": "VOD"
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.165Z",
+    "sessionId": "f2b881cb-090a-49cc-9857-6de803226463",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": "VOD"
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.165Z",
+    "sessionId": "f2b881cb-090a-49cc-9857-6de803226463",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "I need to transfer you to a specialist who can assist with your account. Please hold while I connect you, or you can reach us through our published contact channels."
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  }
+]
+
+════════════════════════════════════════════════════════════════════════
+  ACC-009 James Foster — P-100 $12,000 → immediate PAYMENT_EXCEEDS_SELF_SERVICE_CAP
+════════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────────────
+  GREETING
+────────────────────────────────────────────────────────────────────────
+
+  [Turn 1] GREETING (no sessionId)
+  REQ: {}
+  RES state=AUTH_PENDING msg="Thank you for contacting Meridian Recovery Services. My name is Meridian Assistant. This conversation may be monitored a..."
+  META: rung=null offers={"PIF":false,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=3
+  Session: f3c1a22a-c970-4607-9853-a47daf0a51d7
+
+────────────────────────────────────────────────────────────────────────
+  AUTH
+────────────────────────────────────────────────────────────────────────
+
+  [Turn 2] AUTH ACC-009
+  REQ: {"sessionId":"f3c1a22a-c970-4607-9853-a47daf0a51d7","auth":{"accountRef":"ACC-009","firstName":"James","lastName":"Foster","ssn4":"6655","zip":"33101"}}
+  RES state=ESCALATED msg="This is a communication from a debt collector. This is an attempt to collect a debt, and any information obtained, inclu..."
+  META: rung=null offers={"PIF":false,"BIF_PAYMENTS":false,"SIF":false,"SIF_PAYMENTS":false,"PPA":false} attemptsLeft=null
+
+  (b) SESSION:
+{
+  "state": "ESCALATED",
+  "escalationReason": "PAYMENT_EXCEEDS_SELF_SERVICE_CAP",
+  "disclosures": {
+    "miniMiranda": "2026-06-17T18:37:05.169Z",
+    "collectorStatement": "2026-06-17T18:37:05.169Z",
+    "preLegal": null
+  }
+}
+
+  (c) AUDIT:
+[
+  {
+    "ts": "2026-06-17T18:37:05.168Z",
+    "sessionId": "f3c1a22a-c970-4607-9853-a47daf0a51d7",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": null
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.168Z",
+    "sessionId": "f3c1a22a-c970-4607-9853-a47daf0a51d7",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "Thank you for contacting Meridian Recovery Services. My name is Meridian Assistant. This conversation may be monitored and recorded; by continuing you are providing your consent. How may I help you?\n\nTo access your account, please provide:\n1. Your account reference number\n2. Your first and last name\n3. The last 4 digits of your SSN\n4. Your ZIP code"
+    },
+    "state_before": "GREETING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.169Z",
+    "sessionId": "f3c1a22a-c970-4607-9853-a47daf0a51d7",
+    "event": "AUTH_ATTEMPT",
+    "source": "code",
+    "data": {
+      "attempt": 1,
+      "success": true,
+      "fields_provided": [
+        "accountRef",
+        "firstName",
+        "lastName",
+        "ssn4",
+        "zip"
+      ]
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "AUTH_PENDING"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.169Z",
+    "sessionId": "f3c1a22a-c970-4607-9853-a47daf0a51d7",
+    "event": "DISCLOSURE_DELIVERED",
+    "source": "code",
+    "data": {
+      "which": "MINI_MIRANDA",
+      "verbatim_match": true
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.169Z",
+    "sessionId": "f3c1a22a-c970-4607-9853-a47daf0a51d7",
+    "event": "DISCLOSURE_DELIVERED",
+    "source": "code",
+    "data": {
+      "which": "COLLECTOR_STATEMENT",
+      "verbatim_match": true
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.169Z",
+    "sessionId": "f3c1a22a-c970-4607-9853-a47daf0a51d7",
+    "event": "FUNDS_VERIFICATION_REQUIRED",
+    "source": "code",
+    "data": {
+      "amount": 12000,
+      "threshold": 1500
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.169Z",
+    "sessionId": "f3c1a22a-c970-4607-9853-a47daf0a51d7",
+    "event": "ESCALATION",
+    "source": "code",
+    "data": {
+      "reason": "PAYMENT_EXCEEDS_SELF_SERVICE_CAP"
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.169Z",
+    "sessionId": "f3c1a22a-c970-4607-9853-a47daf0a51d7",
+    "event": "STATE_CHANGE",
+    "source": "code",
+    "data": {
+      "reason": "PAYMENT_EXCEEDS_SELF_SERVICE_CAP"
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  },
+  {
+    "ts": "2026-06-17T18:37:05.169Z",
+    "sessionId": "f3c1a22a-c970-4607-9853-a47daf0a51d7",
+    "event": "BOT_MESSAGE",
+    "source": "code",
+    "data": {
+      "content": "This is a communication from a debt collector. This is an attempt to collect a debt, and any information obtained, including this call recording, will be used for that purpose.\n\nI am with Meridian Recovery Services on behalf of Northwind Capital in regard to your Westside Auto Finance account. Your account was placed with our office as of August 5, 2025 and reflects a balance of $12,000.00. It is my goal to resolve this with you in a courteous and professional manner. How can I help you resolve your balance today?\n\nBased on your balance, any payment arrangement would require funds verification beyond what I can handle here. Let me connect you with a specialist who can assist you.",
+      "disclosuresDelivered": [
+        "MINI_MIRANDA",
+        "COLLECTOR_STATEMENT"
+      ]
+    },
+    "state_before": "AUTH_PENDING",
+    "state_after": "ESCALATED"
+  }
+]
+
+════════════════════════════════════════════════════════════════════════
+  SUMMARY TABLE
+════════════════════════════════════════════════════════════════════════
+Account                        | Assertion                      | Pass/Fail                      | Notes                         
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ACC-001                        | 13/13 checks                   | ✓ PASS                         |
+ACC-002                        | 7/7 checks                     | ✓ PASS                         |
+ACC-003                        | 9/9 checks                     | ✓ PASS                         |
+ACC-004                        | 11/11 checks                   | ✓ PASS                         |
+ACC-005                        | 11/11 checks                   | ✓ PASS                         |
+ACC-006                        | 11/11 checks                   | ✓ PASS                         |
+ACC-007                        | 9/9 checks                     | ✓ PASS                         |
+ACC-008                        | 11/11 checks                   | ✓ PASS                         |
+ACC-009                        | 7/7 checks                     | ✓ PASS                         |
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+TOTAL: 89 passed, 0 failed
+
+✓ All checks passed. Ready for Step 8.

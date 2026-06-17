@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian Admin</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --muted: #64748b;
+    --blue: #2563eb;
+    --blue-hover: #1d4ed8;
+    --red: #dc2626;
+    --red-hover: #b91c1c;
+    --green: #16a34a;
+    --yellow: #ca8a04;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
+  }
+
+  body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
+
+  /* Header */
+  header { background: #0f172a; color: #fff; padding: 0 24px; height: 52px; display: flex; align-items: center; gap: 12px; }
+  header h1 { font-size: 15px; font-weight: 600; letter-spacing: -.2px; }
+  header span { color: #94a3b8; font-size: 12px; }
+
+  /* Tabs */
+  nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; gap: 0; }
+  nav button { background: none; border: none; border-bottom: 2px solid transparent; padding: 12px 18px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+  nav button.active { color: var(--blue); border-bottom-color: var(--blue); }
+  nav button:hover:not(.active) { color: var(--text); }
+
+  /* Panels */
+  main { padding: 24px; max-width: 1200px; margin: 0 auto; }
+  .pane { display: none; }
+  .pane.active { display: block; }
+
+  /* Panel header */
+  .pane-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .pane-header h2 { font-size: 16px; font-weight: 600; }
+  .pane-header .actions { display: flex; gap: 8px; align-items: center; }
+
+  /* Buttons */
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: background .15s; }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover { background: var(--blue-hover); }
+  .btn-danger { background: var(--red); color: #fff; }
+  .btn-danger:hover { background: var(--red-hover); }
+  .btn-ghost { background: none; border: 1px solid var(--border); color: var(--text); }
+  .btn-ghost:hover { background: var(--bg); }
+  .btn-sm { padding: 4px 10px; font-size: 12px; }
+  .btn-icon { padding: 5px 8px; background: none; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 14px; color: var(--muted); }
+  .btn-icon:hover { background: var(--bg); color: var(--text); }
+  .btn-icon.danger:hover { border-color: var(--red); color: var(--red); background: #fef2f2; }
+
+  /* Table */
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: #f8fafc; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr.clickable:hover td { background: #f8fafc; cursor: pointer; }
+  td.actions { display: flex; gap: 6px; }
+
+  /* Tags / Badges */
+  .badge { display: inline-block; padding: 2px 7px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+  .badge-gray   { background: #f1f5f9; color: #475569; }
+  .badge-red    { background: #fef2f2; color: #dc2626; }
+  .badge-orange { background: #fff7ed; color: #c2410c; }
+  .badge-blue   { background: #eff6ff; color: #1d4ed8; }
+  .badge-green  { background: #f0fdf4; color: #16a34a; }
+  .badge-purple { background: #faf5ff; color: #7c3aed; }
+  .badge-yellow { background: #fefce8; color: #a16207; }
+
+  .flag-tag { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; margin: 1px 2px; }
+  .flag-escalation { background: #fef2f2; color: #dc2626; }
+  .flag-pre-legal  { background: #fff7ed; color: #c2410c; }
+  .flag-other      { background: #f1f5f9; color: #475569; }
+
+  /* State pill */
+  .state-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+  .state-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+  .state-RESOLVED              { background: #f0fdf4; color: #16a34a; }
+  .state-RESOLVED::before      { background: #16a34a; }
+  .state-ESCALATED             { background: #fef2f2; color: #dc2626; }
+  .state-ESCALATED::before     { background: #dc2626; }
+  .state-NEGOTIATION_OPEN,
+  .state-NEGOTIATION           { background: #eff6ff; color: #1d4ed8; }
+  .state-NEGOTIATION_OPEN::before,
+  .state-NEGOTIATION::before   { background: #1d4ed8; }
+  .state-AUTH_PENDING          { background: #fefce8; color: #a16207; }
+  .state-AUTH_PENDING::before  { background: #ca8a04; }
+  .state-AWAITING_CONFIRMATION { background: #fdf4ff; color: #7e22ce; }
+  .state-AWAITING_CONFIRMATION::before { background: #9333ea; }
+  .state-GREETING              { background: #f1f5f9; color: #475569; }
+  .state-GREETING::before      { background: #94a3b8; }
+  .state-AUTH_FAILED           { background: #fef2f2; color: #dc2626; }
+  .state-AUTH_FAILED::before   { background: #dc2626; }
+
+  /* Empty state */
+  .empty { padding: 40px; text-align: center; color: var(--muted); }
+  .empty p { font-size: 13px; }
+
+  /* Modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: flex; align-items: flex-start; justify-content: center; padding-top: 60px; z-index: 100; overflow-y: auto; }
+  .modal-overlay.hidden { display: none; }
+  .modal-box { background: var(--surface); border-radius: 12px; width: 560px; max-width: calc(100vw - 48px); box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+  .modal-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 14px; border-bottom: 1px solid var(--border); }
+  .modal-head h3 { font-size: 15px; font-weight: 600; }
+  .modal-close { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 18px; line-height: 1; padding: 2px; }
+  .modal-close:hover { color: var(--text); }
+  .modal-body { padding: 20px; max-height: calc(100vh - 200px); overflow-y: auto; }
+  .modal-foot { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+
+  /* Form */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
+  .form-grid .full { grid-column: 1 / -1; }
+  label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em; }
+  input, select { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; color: var(--text); background: var(--surface); }
+  input:focus, select:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 2px rgba(37,99,235,.15); }
+  input[readonly] { background: var(--bg); color: var(--muted); }
+  .flags-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  .flag-cb { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .flag-cb input { width: auto; }
+
+  /* Expandable audit rows */
+  .audit-row { background: #f8fafc; }
+  .audit-row td { padding: 0 !important; }
+  .audit-content { padding: 12px 20px; }
+  .audit-event { display: flex; gap: 10px; padding: 5px 0; border-left: 3px solid var(--border); padding-left: 10px; margin: 4px 0; font-size: 12px; }
+  .audit-event .ae-time { color: var(--muted); white-space: nowrap; flex-shrink: 0; }
+  .audit-event .ae-type { font-weight: 700; flex-shrink: 0; width: 200px; }
+  .audit-event .ae-data { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 400px; }
+  .ae-STATE_CHANGE             { border-color: #94a3b8; }
+  .ae-STATE_CHANGE .ae-type    { color: #475569; }
+  .ae-AUTH_ATTEMPT             { border-color: #ca8a04; }
+  .ae-AUTH_ATTEMPT .ae-type    { color: #a16207; }
+  .ae-DISCLOSURE_DELIVERED     { border-color: #2563eb; }
+  .ae-DISCLOSURE_DELIVERED .ae-type { color: #1d4ed8; }
+  .ae-OFFER_MADE               { border-color: #7c3aed; }
+  .ae-OFFER_MADE .ae-type      { color: #6d28d9; }
+  .ae-ESCALATION               { border-color: #dc2626; }
+  .ae-ESCALATION .ae-type      { color: #dc2626; }
+  .ae-PAYMENT_AUTHORIZATION    { border-color: #16a34a; }
+  .ae-PAYMENT_AUTHORIZATION .ae-type { color: #16a34a; }
+  .ae-FUNDS_VERIFICATION_ATTEMPTED { border-color: #c2410c; }
+  .ae-FUNDS_VERIFICATION_ATTEMPTED .ae-type { color: #c2410c; }
+  .ae-FUNDS_VERIFICATION_RESULT { border-color: #ea580c; }
+  .ae-FUNDS_VERIFICATION_RESULT .ae-type { color: #c2410c; }
+  .ae-RENEGOTIATION_TRIGGERED { border-color: #d97706; }
+  .ae-RENEGOTIATION_TRIGGERED .ae-type { color: #b45309; }
+  .ae-GUARDRAIL_RETRY { border-color: #9333ea; }
+  .ae-GUARDRAIL_RETRY .ae-type { color: #7c3aed; }
+  .ae-RETRY_EXHAUSTED { border-color: #dc2626; }
+  .ae-RETRY_EXHAUSTED .ae-type { color: #dc2626; }
+  .ae-BOT_MESSAGE .ae-type,
+  .ae-CONSUMER_MESSAGE .ae-type { color: var(--muted); }
+
+  /* Bank balance status */
+  .bb-open   { color: #16a34a; font-weight: 600; }
+  .bb-closed { color: #dc2626; font-weight: 600; }
+  .bb-frozen { color: #d97706; font-weight: 600; }
+
+  /* Refresh chip */
+  .refresh-chip { font-size: 11px; color: var(--muted); }
+  .money { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Meridian Recovery — Admin</h1>
+  <span>Dev panel · No authentication</span>
+</header>
+
+<nav>
+  <button id="tab-accounts"      class="active"  onclick="showTab('accounts')">Accounts</button>
+  <button id="tab-portfolios"                    onclick="showTab('portfolios')">Portfolios</button>
+  <button id="tab-bank-balances"                 onclick="showTab('bank-balances')">Bank Balances</button>
+  <button id="tab-sessions"                      onclick="showTab('sessions')">Active Sessions</button>
+  <button id="tab-logs"                          onclick="showTab('logs')">Session Logs</button>
+</nav>
+
+<main>
+
+  <!-- Accounts -->
+  <div class="pane active" id="pane-accounts">
+    <div class="pane-header">
+      <h2>Accounts</h2>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="openAccountModal()">+ Add Account</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Ref</th>
+            <th>Name</th>
+            <th>Balance</th>
+            <th>Portfolio</th>
+            <th>State</th>
+            <th>Flags</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="accounts-body">
+          <tr><td colspan="7" class="empty"><p>Loading…</p></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Portfolios -->
+  <div class="pane" id="pane-portfolios">
+    <div class="pane-header">
+      <h2>Portfolios</h2>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Client</th>
+            <th>Type</th>
+            <th>Max Discount</th>
+            <th>Max Months</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="portfolios-body">
+          <tr><td colspan="6" class="empty"><p>Loading…</p></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Bank Balances -->
+  <div class="pane" id="pane-bank-balances">
+    <div class="pane-header">
+      <h2>Bank Balances</h2>
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="loadBankBalances()">↻ Refresh</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Account #</th>
+            <th>Account Ref</th>
+            <th>Consumer</th>
+            <th>Balance</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="bank-balances-body">
+          <tr><td colspan="6" class="empty"><p>Loading…</p></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Active Sessions -->
+  <div class="pane" id="pane-sessions">
+    <div class="pane-header">
+      <h2>Active Sessions</h2>
+      <div class="actions">
+        <span class="refresh-chip" id="sessions-ts"></span>
+        <button class="btn btn-ghost" onclick="loadSessions()">↻ Refresh</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Session ID</th>
+            <th>Account</th>
+            <th>State</th>
+            <th>Current Rung</th>
+            <th>Auth Attempts</th>
+            <th>Created</th>
+            <th>Audit Events</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="sessions-body">
+          <tr><td colspan="8" class="empty"><p>Loading…</p></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Session Logs -->
+  <div class="pane" id="pane-logs">
+    <div class="pane-header">
+      <h2>Session Logs</h2>
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="loadLogs()">↻ Refresh</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Session ID</th>
+            <th>Account</th>
+            <th>Final State</th>
+            <th>Escalation Reason</th>
+            <th>Auth Attempts</th>
+            <th>Completed</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="logs-body">
+          <tr><td colspan="7" class="empty"><p>Loading…</p></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<!-- Modal -->
+<div class="modal-overlay hidden" id="modal" onclick="modalOverlayClick(event)">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="modal-title">Edit</h3>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="modal-save-btn" onclick="saveModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:3001/api/admin';
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let portfolioList = [];
+let modalMode = null; // 'account-add' | 'account-edit' | 'portfolio-edit' | 'bank-balance-edit'
+let modalRef   = null;
+let expandedRows = new Set();
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+async function api(method, path, body) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body !== undefined) opts.body = JSON.stringify(body);
+  const r = await fetch(API + path, opts);
+  if (!r.ok) {
+    const err = await r.json().catch(() => ({ error: r.statusText }));
+    throw new Error(err.error ?? r.statusText);
+  }
+  return r.json();
+}
+
+function fmt$$(n) {
+  return n != null ? '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—';
+}
+function fmtDate(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+function fmtShortId(id) { return id ? id.slice(0, 8) + '…' : '—'; }
+
+const ESCALATION_FLAGS = new Set(['BKY','DSP','VOD','CNA','CDP','FRA','DEC','MIL','LIT']);
+const ALL_FLAGS = ['BKY','DSP','VOD','CNA','CDP','FRA','DEC','MIL','LIT','PRE_LEGAL','BREACHED_ARRANGEMENT','NSF_RECENT'];
+
+function flagsHtml(flags) {
+  if (!flags || flags.length === 0) return '<span style="color:#94a3b8">—</span>';
+  return flags.map(f => {
+    const cls = ESCALATION_FLAGS.has(f) ? 'flag-escalation' : f === 'PRE_LEGAL' ? 'flag-pre-legal' : 'flag-other';
+    return `<span class="flag-tag ${cls}">${f}</span>`;
+  }).join('');
+}
+
+function statePill(state) {
+  const safe = (state ?? 'UNKNOWN').replace(/[^A-Z_]/g, '');
+  return `<span class="state-pill state-${safe}">${state}</span>`;
+}
+
+// ─── Tabs ─────────────────────────────────────────────────────────────────────
+function showTab(tab) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('pane-' + tab).classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+
+  if (tab === 'accounts')      loadAccounts();
+  if (tab === 'portfolios')    loadPortfolios();
+  if (tab === 'bank-balances') loadBankBalances();
+  if (tab === 'sessions')      loadSessions();
+  if (tab === 'logs')          loadLogs();
+}
+
+// ─── Accounts ─────────────────────────────────────────────────────────────────
+async function loadAccounts() {
+  try {
+    const accounts = await api('GET', '/accounts');
+    portfolioList = await api('GET', '/portfolios').catch(() => []);
+    const tbody = document.getElementById('accounts-body');
+    if (!accounts.length) {
+      tbody.innerHTML = '<tr><td colspan="7" class="empty"><p>No accounts found.</p></td></tr>';
+      return;
+    }
+    tbody.innerHTML = accounts.map(a => `
+      <tr>
+        <td><code>${a.ref}</code></td>
+        <td>${a.firstName} ${a.lastName}</td>
+        <td class="money">${fmt$$(a.balance)}</td>
+        <td><span class="badge badge-gray">${a.portfolioId}</span></td>
+        <td>${a.state}</td>
+        <td>${flagsHtml(a.flags)}</td>
+        <td class="actions">
+          <button class="btn-icon" title="Edit" onclick="openAccountModal(${JSON.stringify(a).replace(/"/g,'&quot;')})">✏️</button>
+          <button class="btn-icon danger" title="Delete" onclick="deleteAccount('${a.ref}','${a.firstName} ${a.lastName}')">🗑️</button>
+        </td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    document.getElementById('accounts-body').innerHTML = `<tr><td colspan="7" class="empty"><p>Error: ${e.message}</p></td></tr>`;
+  }
+}
+
+function openAccountModal(account = null) {
+  modalMode = account ? 'account-edit' : 'account-add';
+  modalRef  = account?.ref ?? null;
+  document.getElementById('modal-title').textContent = account ? 'Edit Account' : 'Add Account';
+
+  const pOptions = portfolioList.map(p => `<option value="${p.id}" ${account?.portfolioId === p.id ? 'selected' : ''}>${p.id} — ${p.client}</option>`).join('');
+  const flagChecks = ALL_FLAGS.map(f => `
+    <label class="flag-cb">
+      <input type="checkbox" name="flag_${f}" ${account?.flags?.includes(f) ? 'checked' : ''}> ${f}
+    </label>
+  `).join('');
+
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-grid">
+      <div>
+        <label>Account Ref</label>
+        <input id="f-ref" value="${account?.ref ?? ''}" ${account ? 'readonly' : ''} placeholder="ACC-010">
+      </div>
+      <div>
+        <label>Portfolio</label>
+        <select id="f-portfolioId">${pOptions}</select>
+      </div>
+      <div>
+        <label>First Name</label>
+        <input id="f-firstName" value="${account?.firstName ?? ''}" placeholder="Jane">
+      </div>
+      <div>
+        <label>Last Name</label>
+        <input id="f-lastName" value="${account?.lastName ?? ''}" placeholder="Smith">
+      </div>
+      <div>
+        <label>SSN (last 4)</label>
+        <input id="f-ssn4" value="${account?.ssn4 ?? ''}" placeholder="1234" maxlength="4">
+      </div>
+      <div>
+        <label>ZIP Code</label>
+        <input id="f-zip" value="${account?.zip ?? ''}" placeholder="10001">
+      </div>
+      <div>
+        <label>State</label>
+        <input id="f-state" value="${account?.state ?? ''}" placeholder="NY" maxlength="2">
+      </div>
+      <div>
+        <label>Balance ($)</label>
+        <input id="f-balance" type="number" step="0.01" value="${account?.balance ?? ''}" placeholder="0.00">
+      </div>
+      <div class="full">
+        <label>Original Creditor</label>
+        <input id="f-originalCreditor" value="${account?.originalCreditor ?? ''}" placeholder="First National Bank">
+      </div>
+      <div class="full">
+        <label>Client</label>
+        <input id="f-client" value="${account?.client ?? ''}" placeholder="Apex Card">
+      </div>
+      <div class="full">
+        <label>Receive Date</label>
+        <input id="f-receiveDate" type="date" value="${account?.receiveDate ?? ''}">
+      </div>
+      <div class="full">
+        <label>Flags</label>
+        <div class="flags-grid">${flagChecks}</div>
+      </div>
+    </div>
+  `;
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+async function saveModal() {
+  if (modalMode === 'account-add' || modalMode === 'account-edit') {
+    const flags = ALL_FLAGS.filter(f => document.querySelector(`input[name="flag_${f}"]`)?.checked);
+    const data = {
+      ref:              document.getElementById('f-ref').value.trim(),
+      firstName:        document.getElementById('f-firstName').value.trim(),
+      lastName:         document.getElementById('f-lastName').value.trim(),
+      ssn4:             document.getElementById('f-ssn4').value.trim(),
+      zip:              document.getElementById('f-zip').value.trim(),
+      state:            document.getElementById('f-state').value.trim().toUpperCase(),
+      portfolioId:      document.getElementById('f-portfolioId').value,
+      originalCreditor: document.getElementById('f-originalCreditor').value.trim(),
+      client:           document.getElementById('f-client').value.trim(),
+      balance:          parseFloat(document.getElementById('f-balance').value),
+      receiveDate:      document.getElementById('f-receiveDate').value,
+      flags,
+    };
+    try {
+      if (modalMode === 'account-add') {
+        await api('POST', '/accounts', data);
+      } else {
+        await api('PUT', '/accounts/' + modalRef, data);
+      }
+      closeModal();
+      loadAccounts();
+    } catch (e) {
+      alert('Error: ' + e.message);
+    }
+  } else if (modalMode === 'portfolio-edit') {
+    const data = {
+      client:      document.getElementById('p-client').value.trim(),
+      type:        document.getElementById('p-type').value.trim(),
+      maxDiscount: parseFloat(document.getElementById('p-maxDiscount').value) / 100,
+      maxMonths:   parseInt(document.getElementById('p-maxMonths').value, 10),
+    };
+    try {
+      await api('PUT', '/portfolios/' + modalRef, data);
+      closeModal();
+      loadPortfolios();
+    } catch (e) {
+      alert('Error: ' + e.message);
+    }
+  } else if (modalMode === 'bank-balance-edit') {
+    const data = {
+      balance: parseFloat(document.getElementById('bb-balance').value),
+      status:  document.getElementById('bb-status').value,
+    };
+    try {
+      await api('PUT', '/bank-balances/' + encodeURIComponent(modalRef), data);
+      closeModal();
+      loadBankBalances();
+    } catch (e) {
+      alert('Error: ' + e.message);
+    }
+  }
+}
+
+async function deleteAccount(ref, name) {
+  if (!confirm(`Delete account ${ref} (${name})?\n\nThis cannot be undone.`)) return;
+  try {
+    await api('DELETE', '/accounts/' + ref);
+    loadAccounts();
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+// ─── Portfolios ───────────────────────────────────────────────────────────────
+async function loadPortfolios() {
+  try {
+    const portfolios = await api('GET', '/portfolios');
+    portfolioList = portfolios;
+    const tbody = document.getElementById('portfolios-body');
+    tbody.innerHTML = portfolios.map(p => `
+      <tr>
+        <td><code>${p.id}</code></td>
+        <td>${p.client}</td>
+        <td>${p.type}</td>
+        <td>${Math.round(p.maxDiscount * 100)}%</td>
+        <td>${p.maxMonths} mo</td>
+        <td class="actions">
+          <button class="btn-icon" onclick="openPortfolioModal(${JSON.stringify(p).replace(/"/g,'&quot;')})">✏️</button>
+        </td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    document.getElementById('portfolios-body').innerHTML = `<tr><td colspan="6" class="empty"><p>Error: ${e.message}</p></td></tr>`;
+  }
+}
+
+function openPortfolioModal(p) {
+  modalMode = 'portfolio-edit';
+  modalRef  = p.id;
+  document.getElementById('modal-title').textContent = `Edit Portfolio — ${p.id}`;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-grid">
+      <div class="full">
+        <label>Client Name</label>
+        <input id="p-client" value="${p.client}">
+      </div>
+      <div class="full">
+        <label>Type</label>
+        <input id="p-type" value="${p.type}">
+      </div>
+      <div>
+        <label>Max Discount (%)</label>
+        <input id="p-maxDiscount" type="number" step="1" min="0" max="100" value="${Math.round(p.maxDiscount * 100)}">
+      </div>
+      <div>
+        <label>Max Months</label>
+        <input id="p-maxMonths" type="number" step="1" min="1" value="${p.maxMonths}">
+      </div>
+    </div>
+  `;
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+// ─── Active Sessions ──────────────────────────────────────────────────────────
+async function loadSessions() {
+  try {
+    const sessions = await api('GET', '/sessions');
+    document.getElementById('sessions-ts').textContent = 'Updated ' + new Date().toLocaleTimeString();
+    const tbody = document.getElementById('sessions-body');
+    if (!sessions.length) {
+      tbody.innerHTML = '<tr><td colspan="8" class="empty"><p>No active sessions.</p></td></tr>';
+      return;
+    }
+    renderSessionRows(tbody, sessions, 'session');
+  } catch (e) {
+    document.getElementById('sessions-body').innerHTML = `<tr><td colspan="8" class="empty"><p>Error: ${e.message}</p></td></tr>`;
+  }
+}
+
+function renderSessionRows(tbody, sessions, type) {
+  const rows = sessions.map(s => `
+    <tr class="clickable" onclick="toggleAudit('${s.sessionId}','${type}')">
+      <td><code title="${s.sessionId}">${fmtShortId(s.sessionId)}</code></td>
+      <td>${s.accountRef ?? '<span style="color:#94a3b8">—</span>'}</td>
+      <td>${statePill(s.state ?? s.finalState)}</td>
+      <td>${s.currentRung ? `<span class="badge badge-purple">${s.currentRung}</span>` : '—'}</td>
+      <td>${s.authAttempts ?? 0}</td>
+      <td>${fmtDate(s.createdAt)}</td>
+      <td>${s.auditCount ?? '—'}</td>
+      <td><span id="expand-${s.sessionId}" style="color:#94a3b8;font-size:12px">▶ Audit</span></td>
+    </tr>
+    <tr class="audit-row" id="audit-row-${s.sessionId}" style="display:none">
+      <td colspan="8"><div class="audit-content" id="audit-content-${s.sessionId}">Loading…</div></td>
+    </tr>
+  `).join('');
+  tbody.innerHTML = rows;
+}
+
+async function toggleAudit(sessionId, type) {
+  const row  = document.getElementById('audit-row-' + sessionId);
+  const icon = document.getElementById('expand-' + sessionId);
+  const open = row.style.display !== 'none';
+  row.style.display = open ? 'none' : 'table-row';
+  icon.textContent  = open ? '▶ Audit' : '▼ Audit';
+  if (!open) {
+    const content = document.getElementById('audit-content-' + sessionId);
+    try {
+      const endpoint = type === 'session' ? `/sessions/${sessionId}/audit` : `/session-logs/${sessionId}`;
+      const data = await api('GET', endpoint);
+      const events = data.audit ?? [];
+      content.innerHTML = events.length ? events.map(renderAuditEvent).join('') : '<p style="color:#94a3b8;font-size:12px">No audit events.</p>';
+    } catch (e) {
+      content.textContent = 'Error: ' + e.message;
+    }
+  }
+}
+
+function renderAuditEvent(e) {
+  const time = e.ts ? new Date(e.ts).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '';
+  const data = e.data ? JSON.stringify(e.data).slice(0, 80) : '';
+  const cls  = e.event ? `ae-${e.event}` : '';
+  return `<div class="audit-event ${cls}">
+    <span class="ae-time">${time}</span>
+    <span class="ae-type">${e.event ?? ''}</span>
+    <span class="ae-data">${data}</span>
+  </div>`;
+}
+
+// ─── Session Logs ─────────────────────────────────────────────────────────────
+async function loadLogs() {
+  try {
+    const logs = await api('GET', '/session-logs');
+    const tbody = document.getElementById('logs-body');
+    if (!logs.length) {
+      tbody.innerHTML = '<tr><td colspan="7" class="empty"><p>No completed sessions yet. Sessions are saved here when they reach RESOLVED or ESCALATED.</p></td></tr>';
+      return;
+    }
+    const rows = logs.map(s => `
+      <tr class="clickable" onclick="toggleAudit('${s.sessionId}','log')">
+        <td><code title="${s.sessionId}">${fmtShortId(s.sessionId)}</code></td>
+        <td>${s.accountRef ?? '—'}</td>
+        <td>${statePill(s.finalState)}</td>
+        <td>${s.escalationReason ? `<span class="badge badge-red">${s.escalationReason}</span>` : '—'}</td>
+        <td>${s.authAttempts}</td>
+        <td>${fmtDate(s.completedAt)}</td>
+        <td><span id="expand-${s.sessionId}" style="color:#94a3b8;font-size:12px">▶ Audit</span></td>
+      </tr>
+      <tr class="audit-row" id="audit-row-${s.sessionId}" style="display:none">
+        <td colspan="7"><div class="audit-content" id="audit-content-${s.sessionId}">Loading…</div></td>
+      </tr>
+    `).join('');
+    tbody.innerHTML = rows;
+  } catch (e) {
+    document.getElementById('logs-body').innerHTML = `<tr><td colspan="7" class="empty"><p>Error: ${e.message}</p></td></tr>`;
+  }
+}
+
+// ─── Bank Balances ────────────────────────────────────────────────────────────
+async function loadBankBalances() {
+  try {
+    const rows = await api('GET', '/bank-balances');
+    const tbody = document.getElementById('bank-balances-body');
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="6" class="empty"><p>No bank balances found.</p></td></tr>';
+      return;
+    }
+    tbody.innerHTML = rows.map(r => {
+      const last4 = r.accountNumber ? r.accountNumber.slice(-4) : '????';
+      const name  = r.accountRef ? `${r.firstName} ${r.lastName}` : '<span style="color:#94a3b8">—</span>';
+      const ref   = r.accountRef ?? '<span style="color:#94a3b8">—</span>';
+      const statusCls = r.status === 'OPEN' ? 'bb-open' : r.status === 'CLOSED' ? 'bb-closed' : 'bb-frozen';
+      return `
+        <tr>
+          <td><code>••••${last4}</code></td>
+          <td>${ref}</td>
+          <td>${name}</td>
+          <td class="money">${fmt$$(r.balance)}</td>
+          <td class="${statusCls}">${r.status}</td>
+          <td class="actions">
+            <button class="btn-icon" title="Edit" onclick="openBankBalanceModal(${JSON.stringify(r).replace(/"/g,'&quot;')})">✏️</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  } catch (e) {
+    document.getElementById('bank-balances-body').innerHTML = `<tr><td colspan="6" class="empty"><p>Error: ${e.message}</p></td></tr>`;
+  }
+}
+
+function openBankBalanceModal(row) {
+  modalMode = 'bank-balance-edit';
+  modalRef  = row.accountNumber;
+  const last4 = row.accountNumber ? row.accountNumber.slice(-4) : '????';
+  const name  = row.accountRef ? `${row.firstName} ${row.lastName} (${row.accountRef})` : 'Unlinked';
+  document.getElementById('modal-title').textContent = `Edit Bank Balance — ••••${last4}`;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-grid">
+      <div class="full">
+        <label>Account</label>
+        <input value="${name}" readonly>
+      </div>
+      <div>
+        <label>Balance ($)</label>
+        <input id="bb-balance" type="number" step="0.01" min="0" value="${row.balance ?? 0}">
+      </div>
+      <div>
+        <label>Status</label>
+        <select id="bb-status">
+          <option value="OPEN"   ${row.status === 'OPEN'   ? 'selected' : ''}>OPEN</option>
+          <option value="CLOSED" ${row.status === 'CLOSED' ? 'selected' : ''}>CLOSED</option>
+          <option value="FROZEN" ${row.status === 'FROZEN' ? 'selected' : ''}>FROZEN</option>
+        </select>
+      </div>
+    </div>
+  `;
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+// ─── Modal helpers ────────────────────────────────────────────────────────────
+function closeModal() {
+  document.getElementById('modal').classList.add('hidden');
+  modalMode = null;
+  modalRef  = null;
+}
+
+function modalOverlayClick(e) {
+  if (e.target === document.getElementById('modal')) closeModal();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+loadAccounts();
+loadPortfolios();
+loadBankBalances();
+</script>
+</body>
+</html>
